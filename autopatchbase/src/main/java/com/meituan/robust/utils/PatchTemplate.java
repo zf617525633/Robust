@@ -32,7 +32,7 @@ public class PatchTemplate implements ChangeQuickRedirect {
         if (booleanObj instanceof Byte) {
             byte byteValue = (Byte) booleanObj;
             boolean booleanValue = byteValue != 0x00;
-            return new Boolean(booleanValue);
+            return Boolean.valueOf(booleanValue);
         }
         return booleanObj;
     }

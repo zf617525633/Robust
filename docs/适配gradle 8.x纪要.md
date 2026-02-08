@@ -27,6 +27,9 @@
 ### 3.3 字节码与工具链兼容性
 *   **类版本降级**：修复了在 Java 17 环境下生成的补丁类（版本 61.0）无法被 `dx` 工具识别的问题。在 `PatchesControlFactory` 等工厂类中强制设置 `setMajorVersion(ClassFile.JAVA_7)`，确保补丁字节码维持在 Java 7 (51.0) 水平。
 *   **R8 Mapping 解析增强**：更新了 `ReadMapping.java` 的解析逻辑，增加了对以 `#` 开头的注释行的跳过逻辑处理，支持了 R8 生成的包含 JSON 元数据的新版 mapping 格式。
+*   **Java 17 语法兼容性修复**：
+    *   修复了 `PatchTemplate.java` 中 `new Boolean()` 构造函数在 Java 9+ 中过时并被标记为删除的问题，统一替换为 `Boolean.valueOf()`。
+    *   在 `EnhancedRobustUtils.java` 中移除了已过时的 `isAccessible()` 检查，直接调用 `setAccessible(true)`，以消除 Java 编译警告。
 *   **宽松匹配逻辑**：调整了混淆映射匹配机制，当开启 ProGuard 但在 mapping 文件中未找到对应类时（常见于被 Keep 的类），默认使用原始类名，增强了补丁生成的稳定性。
 
 ### 3.4 任务执行逻辑优化

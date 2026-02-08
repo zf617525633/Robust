@@ -49,9 +49,7 @@ public class EnhancedRobustUtils {
                 try {
                     method = clazz.getDeclaredMethod(methodName, parameterTypes);
                     if (method != null) {
-                        if (!method.isAccessible()) {
-                            method.setAccessible(true);
-                        }
+                        method.setAccessible(true);
                         return method;
                     }
                 } catch (Exception e) {
@@ -274,9 +272,7 @@ public class EnhancedRobustUtils {
         if (!cl.isInterface()) {
             try {
                 field = cl.getDeclaredField(name);
-                if (!field.isAccessible()) {
-                    field.setAccessible(true);
-                }
+                field.setAccessible(true);
                 return field;
             } catch (NoSuchFieldException e) {
                 // ignore and search next
@@ -304,9 +300,7 @@ public class EnhancedRobustUtils {
     private static Field getReflectStaticField(String name, Class clazz) throws NoSuchFieldException {
         try {
             Field field = clazz.getDeclaredField(name);
-            if (!field.isAccessible()) {
-                field.setAccessible(true);
-            }
+            field.setAccessible(true);
             return field;
         } catch (NoSuchFieldException e) {
             // ignore and search next
