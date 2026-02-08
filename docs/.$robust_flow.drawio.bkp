@@ -1,0 +1,68 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Robust热修复流程">
+    <mxGraphModel dx="1038" dy="651" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2" value="编译期 (Gradle Plugin)" style="swimlane;whiteSpace=wrap" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="200" height="400" as="geometry" />
+        </mxCell>
+        <mxCell id="3" value="遍历Class文件" style="rounded=1;whiteSpace=wrap" vertex="1" parent="2">
+          <mxGeometry x="40" y="50" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="4" value="插入静态变量&lt;br&gt;changeQuickRedirect" style="rounded=0;whiteSpace=wrap" vertex="1" parent="2">
+          <mxGeometry x="40" y="130" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="5" value="在方法头部&lt;br&gt;插入If判断" style="rounded=0;whiteSpace=wrap" vertex="1" parent="2">
+          <mxGeometry x="40" y="220" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="6" value="生成APK及&lt;br&gt;methodsMap" style="shape=parallelogram;whiteSpace=wrap" vertex="1" parent="2">
+          <mxGeometry x="40" y="310" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="7" value="运行期 (Runtime)" style="swimlane;whiteSpace=wrap" vertex="1" parent="1">
+          <mxGeometry x="520" y="40" width="200" height="400" as="geometry" />
+        </mxCell>
+        <mxCell id="8" value="下载并加载&lt;br&gt;Patch.jar" style="rounded=1;whiteSpace=wrap" vertex="1" parent="7">
+          <mxGeometry x="40" y="50" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="9" value="反射给目标类&lt;br&gt;cqr变量赋值" style="rounded=0;whiteSpace=wrap" vertex="1" parent="7">
+          <mxGeometry x="40" y="130" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="10" value="执行方法" style="rhombus;whiteSpace=wrap" vertex="1" parent="7">
+          <mxGeometry x="50" y="210" width="100" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="11" value="运行原逻辑" style="rounded=0;whiteSpace=wrap" vertex="1" parent="7">
+          <mxGeometry x="10" y="320" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="12" value="跳转补丁逻辑" style="rounded=0;whiteSpace=wrap" vertex="1" parent="7">
+          <mxGeometry x="110" y="320" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="13" value="补丁生成期 (AutoPatch)" style="swimlane;whiteSpace=wrap" vertex="1" parent="1">
+          <mxGeometry x="280" y="40" width="200" height="400" as="geometry" />
+        </mxCell>
+        <mxCell id="14" value="读取@Modify注解" style="rounded=1;whiteSpace=wrap" vertex="1" parent="13">
+          <mxGeometry x="40" y="50" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="15" value="根据Mapping还原类名" style="rounded=0;whiteSpace=wrap" vertex="1" parent="13">
+          <mxGeometry x="40" y="130" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="16" value="生成补丁类&lt;br&gt;实现CQR接口" style="rounded=0;whiteSpace=wrap" vertex="1" parent="13">
+          <mxGeometry x="40" y="220" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="17" value="dx工具打包成Dex" style="rounded=0;whiteSpace=wrap" vertex="1" parent="13">
+          <mxGeometry x="40" y="310" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="18" style="edgeStyle=orthogonalEdgeStyle" edge="1" parent="1" source="3" target="4"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="19" style="edgeStyle=orthogonalEdgeStyle" edge="1" parent="1" source="4" target="5"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="20" style="edgeStyle=orthogonalEdgeStyle" edge="1" parent="1" source="5" target="6"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="21" style="edgeStyle=orthogonalEdgeStyle" edge="1" parent="1" source="14" target="15"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="22" style="edgeStyle=orthogonalEdgeStyle" edge="1" parent="1" source="15" target="16"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="23" style="edgeStyle=orthogonalEdgeStyle" edge="1" parent="1" source="16" target="17"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="24" style="edgeStyle=orthogonalEdgeStyle" edge="1" parent="1" source="8" target="9"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="25" style="edgeStyle=orthogonalEdgeStyle" edge="1" parent="1" source="9" target="10"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="26" value="CQR==null" style="edgeStyle=orthogonalEdgeStyle" edge="1" parent="1" source="10" target="11"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="27" value="CQR!=null" style="edgeStyle=orthogonalEdgeStyle" edge="1" parent="1" source="10" target="12"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
