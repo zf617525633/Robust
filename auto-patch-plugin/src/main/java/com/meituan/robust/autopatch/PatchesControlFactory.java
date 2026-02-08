@@ -7,6 +7,7 @@ import javassist.CtClass;
 import javassist.CtMethod;
 import javassist.NotFoundException;
 import javassist.bytecode.AccessFlag;
+import javassist.bytecode.ClassFile;
 
 import static com.meituan.robust.autopatch.Config.classPool;
 
@@ -27,6 +28,7 @@ public class PatchesControlFactory {
         CtClass patchClass = classPool.get(NameManger.getInstance().getPatchName(modifiedClass.getName()));
         patchClass.defrost();
         CtClass controlClass = classPool.getAndRename(Constants.PATCH_TEMPLATE_FULL_NAME, NameManger.getInstance().getPatchControlName(modifiedClass.getSimpleName()));
+        controlClass.getClassFile().setMajorVersion(ClassFile.JAVA_7);
         StringBuilder getRealParameterMethodBody = new StringBuilder();
         getRealParameterMethodBody.append("public Object getRealParameter(Object parameter) {");
         getRealParameterMethodBody.append("if(parameter instanceof " + modifiedClass.getName() + "){");

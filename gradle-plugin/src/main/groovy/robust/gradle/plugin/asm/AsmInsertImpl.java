@@ -1,6 +1,5 @@
 package robust.gradle.plugin.asm;
 
-import com.android.utils.AsmUtils;
 import com.meituan.robust.ChangeQuickRedirect;
 import com.meituan.robust.Constants;
 
@@ -67,7 +66,7 @@ public class AsmInsertImpl extends InsertcodeStrategy {
     private class InsertMethodBodyAdapter extends ClassVisitor implements Opcodes {
 
         public InsertMethodBodyAdapter() {
-            super(Opcodes.ASM5);
+            super(Opcodes.ASM9);
         }
 
         ClassWriter classWriter;
@@ -76,7 +75,7 @@ public class AsmInsertImpl extends InsertcodeStrategy {
         private Map<String, Boolean> methodInstructionTypeMap;
 
         public InsertMethodBodyAdapter(ClassWriter cw, String className, Map<String, Boolean> methodInstructionTypeMap) {
-            super(Opcodes.ASM5, cw);
+            super(Opcodes.ASM9, cw);
             this.classWriter = cw;
             this.className = className;
             this.methodInstructionTypeMap = methodInstructionTypeMap;
@@ -120,7 +119,7 @@ public class AsmInsertImpl extends InsertcodeStrategy {
 
         private boolean isQualifiedMethod(int access, String name, String desc, Map<String, Boolean> c) {
             //类初始化函数和构造函数过滤
-            if (AsmUtils.CLASS_INITIALIZER.equals(name) || AsmUtils.CONSTRUCTOR.equals(name)) {
+            if ("<clinit>".equals(name) || "<init>".equals(name)) {
                 return false;
             }
             //@warn 这部分代码请重点review一下，判断条件写错会要命
@@ -180,7 +179,7 @@ public class AsmInsertImpl extends InsertcodeStrategy {
             String methodId;
 
             public MethodBodyInsertor(MethodVisitor mv, String className, String desc, boolean isStatic, String methodId, String name, int access) {
-                super(Opcodes.ASM5, mv, access, name, desc);
+                super(Opcodes.ASM9, mv, access, name, desc);
                 this.className = className;
                 this.returnType = Type.getReturnType(desc);
                 Type[] argsType = Type.getArgumentTypes(desc);

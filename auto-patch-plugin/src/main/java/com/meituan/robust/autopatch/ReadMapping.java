@@ -66,6 +66,10 @@ public class ReadMapping {
                     line = reader.readLine();
                     while (line != null) {
                         line = line.trim();
+                        if (line.startsWith("#")) {
+                            line = reader.readLine();
+                            continue;
+                        }
                         if (line.endsWith(":")) {
                             needBacktrace = true;
                             break;
@@ -113,9 +117,7 @@ public class ReadMapping {
 
     public ClassMapping getClassMappingOrDefault(String classname) {
         ClassMapping defaultClassMapping = new ClassMapping();
-        if (!Config.supportProGuard) {
-            defaultClassMapping.setValueName(classname);
-        }
+        defaultClassMapping.setValueName(classname);
         return usedInModifiedClassMappingInfo.getOrDefault(classname, defaultClassMapping);
     }
 

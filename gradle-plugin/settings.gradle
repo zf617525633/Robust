@@ -14,9 +14,6 @@ dependencyResolutionManagement {
     }
 }
 
-includeBuild('gradle-plugin')
-includeBuild('auto-patch-plugin')
-
-include ':app'
+rootProject.name = 'gradle-plugin'
 include ':autopatchbase'
-include ':patch'
+project(':autopatchbase').projectDir = new File('../autopatchbase')

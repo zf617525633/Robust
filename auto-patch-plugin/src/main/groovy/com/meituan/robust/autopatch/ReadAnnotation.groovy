@@ -11,7 +11,6 @@ import javassist.expr.ExprEditor
 import javassist.expr.MethodCall
 import org.codehaus.groovy.GroovyException
 import org.gradle.api.logging.Logger
-import robust.gradle.plugin.AutoPatchTransform
 
 class ReadAnnotation {
     static Logger logger
@@ -19,7 +18,7 @@ class ReadAnnotation {
     public static void readAnnotation(List<CtClass> box, Logger log) {
         logger = log;
         Set patchMethodSignureSet = new HashSet<String>();
-        synchronized (AutoPatchTransform.class) {
+        synchronized (ReadAnnotation.class) {
             if (Constants.ModifyAnnotationClass == null) {
                 Constants.ModifyAnnotationClass = box.get(0).getClassPool().get(Constants.MODIFY_ANNOTATION).toClass();
             }

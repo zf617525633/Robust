@@ -3,8 +3,8 @@ package com.meituan.sample;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.meituan.robust.patch.annotaion.Add;
 import com.meituan.robust.patch.annotaion.Modify;
+import com.meituan.robust.sample.R;
 
 import java.lang.reflect.Field;
 

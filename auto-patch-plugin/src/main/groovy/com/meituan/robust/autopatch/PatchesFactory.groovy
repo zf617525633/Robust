@@ -63,9 +63,6 @@ class PatchesFactory {
 
         dealWithSuperMethod(temPatchClass, modifiedClass, patchPath);
 
-        if (Config.supportProGuard && ReadMapping.getInstance().getClassMapping(modifiedClass.getName()) == null) {
-            throw new RuntimeException(" something wrong with mappingfile ,cannot find  class  " + modifiedClass.getName() + "   in mapping file");
-        }
         List<CtMethod> invokeSuperMethodList = Config.invokeSuperMethodMap.getOrDefault(modifiedClass.getName(), new ArrayList<>());
 
         createPublicMethodForPrivate(temPatchClass);

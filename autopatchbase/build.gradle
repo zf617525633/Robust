@@ -1,4 +1,4 @@
-apply plugin: 'java'
-apply from: '../gradle_mvn_push.gradle'
-sourceCompatibility= 1.7
-targetCompatibility= 1.7
+apply plugin: 'java-library'
+
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17

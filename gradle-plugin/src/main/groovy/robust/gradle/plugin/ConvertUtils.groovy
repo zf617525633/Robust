@@ -1,6 +1,5 @@
 package robust.gradle.plugin
 
-import com.android.SdkConstants
 import com.android.build.api.transform.TransformInput
 import javassist.ClassPool
 import javassist.CtClass
@@ -12,6 +11,8 @@ import java.util.regex.Matcher
  * Created by mivanzhang on 16/11/3.
  */
 class ConvertUtils {
+    private static final String DOT_CLASS = ".class"
+
     static List<CtClass> toCtClasses(Collection<TransformInput> inputs, ClassPool classPool) {
         List<String> classNames = new ArrayList<>()
         List<CtClass> allClass = new ArrayList<>();
@@ -21,8 +22,8 @@ class ConvertUtils {
                 def dirPath = it.file.absolutePath
                 classPool.insertClassPath(it.file.absolutePath)
                 org.apache.commons.io.FileUtils.listFiles(it.file, null, true).each {
-                    if (it.absolutePath.endsWith(SdkConstants.DOT_CLASS)) {
-                        def className = it.absolutePath.substring(dirPath.length() + 1, it.absolutePath.length() - SdkConstants.DOT_CLASS.length()).replaceAll(Matcher.quoteReplacement(File.separator), '.')
+                    if (it.absolutePath.endsWith(DOT_CLASS)) {
+                        def className = it.absolutePath.substring(dirPath.length() + 1, it.absolutePath.length() - DOT_CLASS.length()).replaceAll(Matcher.quoteReplacement(File.separator), '.')
                         if(classNames.contains(className)){
                             throw new RuntimeException("You have duplicate classes with the same name : "+className+" please remove duplicate classes ")
                         }
@@ -38,8 +39,8 @@ class ConvertUtils {
                 while (classes.hasMoreElements()) {
                     JarEntry libClass = classes.nextElement();
                     String className = libClass.getName();
-                    if (className.endsWith(SdkConstants.DOT_CLASS)) {
-                        className = className.substring(0, className.length() - SdkConstants.DOT_CLASS.length()).replaceAll('/', '.')
+                    if (className.endsWith(DOT_CLASS)) {
+                        className = className.substring(0, className.length() - DOT_CLASS.length()).replaceAll('/', '.')
                         if(classNames.contains(className)){
                             throw new RuntimeException("You have duplicate classes with the same name : "+className+" please remove duplicate classes ")
                         }

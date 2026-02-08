@@ -25,188 +25,42 @@ class RobustApkHashAction implements Action<Project> {
             }
 
             packageTask.doFirst {
-//                project.logger.quiet("===start compute robust apk hash===")
-//                def startTime = System.currentTimeMillis()
                 List<File> partFiles = new ArrayList<>()
 
-                if (isGradlePlugin300orAbove(project)){
-
-                    //protected FileCollection resourceFiles;
-                    FileCollection resourceFiles
-                    if (isGradlePlugin320orAbove(project)) {
-                        try {
-                            //gradle 4.6 适配
-                            resourceFiles = packageTask.resourceFiles.get()
-                            partFiles.add(resourceFiles.getFiles())
-                        } catch (Exception e){
-                            //gradle 5.4+ & gradle tools 3.5.0+ 适配
-                            Object resFiles = packageTask.resourceFiles
-                            for (File file : resFiles){
-                                partFiles.add(file)
-                            }
+                // Use a more robust way to collect files from packageTask properties
+                def collectFiles = { propertyName ->
+                    try {
+                        def property = packageTask.hasProperty(propertyName) ? packageTask."$propertyName" : null
+                        if (property != null) {
+                            project.files(property).each { partFiles.add(it) }
                         }
-                    } else {
-                        resourceFiles = packageTask.resourceFiles
-                        partFiles.add(resourceFiles.getFiles())
+                    } catch (Exception e) {
+                        // ignore
                     }
-
-                    //protected FileCollection dexFolders;
-                    FileCollection dexFolders = null
-                    try {
-                        dexFolders = packageTask.dexFolders
-                    } catch (MissingPropertyException e) {
-                        // api is not public
-                    }
-                    if (null != dexFolders) {
-                        partFiles.addAll(dexFolders.getFiles())
-                    }
-
-                    //protected FileCollection javaResourceFiles;
-                    FileCollection javaResourceFiles = null
-                    try {
-                        javaResourceFiles = packageTask.javaResourceFiles
-                    } catch (MissingPropertyException e) {
-                        // api is not public
-                    }
-                    if (null != javaResourceFiles) {
-                        partFiles.addAll(javaResourceFiles.getFiles())
-                    }
-
-                    //protected FileCollection jniFolders;
-                    FileCollection jniFolders = null
-                    try {
-                        jniFolders = packageTask.jniFolders
-                    } catch (MissingPropertyException e) {
-                        // api is not public
-                    }
-                    if (null != jniFolders) {
-                        partFiles.addAll(jniFolders.getFiles())
-                    }
-
-                    //protected FileCollection assets;
-                    FileCollection assets = null;
-                    boolean gradleToolsBigThan350 = false;
-                    try {
-                        if (isGradlePlugin320orAbove(project)) {
-                            try {
-                                //gradle 4.6 适配
-                                assets = packageTask.assets.get()
-                            } catch (Exception e) {
-                                //gradle 5.4+ & gradle tools 3.5.0+ 适配
-                                gradleToolsBigThan350 = true;
-                                assets = packageTask.assets.getAsFileTree()
-//                                for (File file : packageTask.assets.getAsFileTree().getFiles()){
-//                                    if (null == assetsDir) {
-//                                        assetsDir = file.getParentFile()
-//                                    }
-//                                    System.err.println("robust ====== packageTask.assets file  " + file.getAbsolutePath())
-////                                    partFiles.add(file)
-//                                }
-
-//                                System.err.println("robust ====== packageTask.assetsDir   " + assetsDir.getAbsolutePath())
-                            }
-
-                        } else {
-                            assets = packageTask.assets
-                        }
-                    } catch (MissingPropertyException e) {
-                    }
-                    if (null != assets) {
-                        partFiles.add(assets.getFiles())
-                    }
-
-                    String robustHash = computeRobustHash(partFiles)
-                    if (gradleToolsBigThan350) {
-                        //gradle tools 3.5.0+ , add Constants.ROBUST_APK_HASH_FILE_NAM file to resources.ap_
-//                        createHashFile(assetsDir.getAbsolutePath(), Constants.ROBUST_APK_HASH_FILE_NAME, robustHash)
-                        for (File file : packageTask.getInputs().getFiles().getAsFileTree()) {
-                            if (file.getAbsolutePath().endsWith(".ap_")) {
-                                try {
-                                    createHashFile2(file.getAbsolutePath(), "assets/" + Constants.ROBUST_APK_HASH_FILE_NAME, robustHash);
-//                                    System.out.println(">>>write hash:" + robustHash);
-                                } catch (IOException e) {
-                                }
-                            }
-                        }
-                    } else if (assets instanceof FileCollection) {
-                        FileCollection assetsFileCollection = (FileCollection) assets;
-                        createHashFile(assetsFileCollection.asPath, Constants.ROBUST_APK_HASH_FILE_NAME, robustHash)
-                    }
-                    //额外保存一份Constants.ROBUST_APK_HASH_FILE_NAME文件到build/output/robust，便于CI存储
-                    String buildRobustDir = "${project.buildDir}" + File.separator + "$Constants.ROBUST_GENERATE_DIRECTORY" + File.separator
-                    createHashFile(buildRobustDir, Constants.ROBUST_APK_HASH_FILE_NAME, robustHash)
-                    return
-
-                } else {
-
-                File resourceFile = packageTask.resourceFile
-                if (null == resourceFile) {
-                    return
-                }
-                partFiles.add(resourceFile)
-
-                Collection<File> dexFolders = null
-                try {
-                    dexFolders = packageTask.dexFolders
-                } catch (MissingPropertyException e) {
-                    // api is not public
-                }
-                if (null != dexFolders) {
-                    partFiles.addAll(dexFolders)
                 }
 
-                Collection<File> javaResourceFiles = null
-                try {
-                    javaResourceFiles = packageTask.javaResourceFiles
-                } catch (MissingPropertyException e) {
-                    // api is not public
-                }
-                if (null != javaResourceFiles) {
-                    partFiles.addAll(javaResourceFiles)
-                }
-
-
-                Collection<File> jniFolders = null
-                try {
-                    jniFolders = packageTask.jniFolders
-                } catch (MissingPropertyException e) {
-                    // api is not public
-                }
-                if (null != jniFolders) {
-                    partFiles.addAll(jniFolders)
-                }
-
-
-                File assets = null;
-                try {
-                    assets = packageTask.assets
-                } catch (MissingPropertyException e) {
-                    // Android Gradle Plugin version < 2.2.0-beta1
-                }
-
-                if (null != assets) {
-                    partFiles.add(assets)
-                }
+                collectFiles("resourceFiles")
+                collectFiles("dexFolders")
+                collectFiles("javaResourceFiles")
+                collectFiles("jniFolders")
+                collectFiles("assets")
 
                 String robustHash = computeRobustHash(partFiles)
-
-                if (null != assets) {
-                    // Android Gradle Plugin is 2.2.0-beta1 + , assets is able to access
-                    createHashFile(assets.absolutePath, Constants.ROBUST_APK_HASH_FILE_NAME, robustHash)
-                } else {
-                    // add robustHashFile to resourceFile
-                    File robustHashFile = createHashFile(resourceFile.parentFile.absolutePath, Constants.ROBUST_APK_HASH_FILE_NAME, robustHash)
-                    RobustApkHashZipUtils.addApkHashFile2ApFile(resourceFile, robustHashFile);
+                
+                // For AGP 8.x, we should try to put the hash file into the assets
+                // The previous logic tried to find .ap_ files in inputs
+                for (File file : packageTask.getInputs().getFiles().getAsFileTree()) {
+                    if (file.getAbsolutePath().endsWith(".ap_")) {
+                        try {
+                            createHashFile2(file.getAbsolutePath(), "assets/" + Constants.ROBUST_APK_HASH_FILE_NAME, robustHash);
+                        } catch (IOException e) {
+                        }
+                    }
                 }
 
-                String buildRubustDir = "${project.buildDir}" + File.separator + "$Constants.ROBUST_GENERATE_DIRECTORY" + File.separator
-                createHashFile(buildRubustDir, Constants.ROBUST_APK_HASH_FILE_NAME, robustHash)
-
-//                def cost = (System.currentTimeMillis() - startTime) / 1000
-//                logger.quiet "robust apk hash is $robustHash"
-//                logger.quiet "compute robust apk hash cost $cost second"
-//                project.logger.quiet("===compute robust apk hash end===")
-                }
+                // Also save to build directory
+                String buildRobustDir = "${project.buildDir}" + File.separator + "$Constants.ROBUST_GENERATE_DIRECTORY" + File.separator
+                createHashFile(buildRobustDir, Constants.ROBUST_APK_HASH_FILE_NAME, robustHash)
             }
         }
     }
