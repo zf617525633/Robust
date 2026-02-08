@@ -18,7 +18,7 @@ dependencies {
     implementation localGroovy()
     implementation 'com.android.tools.build:gradle:8.1.0'
     implementation 'org.javassist:javassist:3.29.2-GA'
-    implementation project(':autopatchbase')
+    implementation project(':autopatchbase-lib')
     implementation 'commons-io:commons-io:2.11.0'
 }
 

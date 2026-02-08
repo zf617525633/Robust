@@ -24,7 +24,7 @@ dependencies {
     implementation 'com.android.tools.build:gradle:8.1.0'
     implementation 'org.javassist:javassist:3.29.2-GA'
     implementation fileTree(dir: "./src/main/libs", include: ['*.jar'])
-    implementation project(':autopatchbase')
+    implementation project(':autopatchbase-lib')
     implementation 'org.ow2.asm:asm:9.5'
     implementation 'org.ow2.asm:asm-commons:9.5'
     implementation 'org.ow2.asm:asm-util:9.5'

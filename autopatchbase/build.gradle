@@ -1,4 +1,7 @@
 apply plugin: 'java-library'
 
+group = 'com.meituan.robust'
+version = '0.4.99'
+
 sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
